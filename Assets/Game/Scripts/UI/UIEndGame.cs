@@ -6,26 +6,31 @@ using UnityEngine.SceneManagement;
 
 public class UIEndGame : MonoBehaviour
 {
-    [SerializeField] GameObject _view = null;
-    [SerializeField] Text _text = null;
+    [SerializeField] private GameObject _view = null;
+    [SerializeField] private Text _text = null;
 
-    void Start() {
+    private void Start()
+    {
         GameplayManager.Instance.OnGameEnded += OnGameEnded;
         _view.SetActive(false);
     }
 
-    void OnGameEnded(bool p_won) {
-        if (p_won) {
+    public void OnGameEnded(bool p_won) 
+    {
+        if (p_won) 
+        {
             _text.text = "YOU WIN!";
         }
-        else {
+        else 
+        {
             _text.text = "YOU LOSE!";
         }
 
         _view.SetActive(true);
     }
 
-    public void RestartButton() {
+    public void RestartButton() 
+    {
         SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
     }
 }

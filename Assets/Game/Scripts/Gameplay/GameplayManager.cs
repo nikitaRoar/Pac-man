@@ -13,28 +13,30 @@ public class GameplayManager : SingletonMonobehaviour<GameplayManager>
     [HideInInspector] public PacMan Pacman = null;
 
     [Header("Prefabs")]
-    [SerializeField] GameObject _pacmanPrefab = null;
-    [SerializeField] GameObject _blinkyPrefab = null;
-    [SerializeField] GameObject _pinkyPrefab = null;
-    [SerializeField] GameObject _inkyPrefab = null;
-    [SerializeField] GameObject _clydePrefab = null;
+    [SerializeField] private GameObject _pacmanPrefab = null;
+    [SerializeField] private GameObject _blinkyPrefab = null;
+    [SerializeField] private GameObject _pinkyPrefab = null;
+    [SerializeField] private GameObject _inkyPrefab = null;
+    [SerializeField] private GameObject _clydePrefab = null;
 
     [Header("Gameplay")]
-    [SerializeField] float _frightenedDuration = 1;
-    [SerializeField] float _changeGhostStateTime = 10;
-    [SerializeField] [Min(1)] float _timeMultiplier = 1;
+    [SerializeField] private float _frightenedDuration = 1;
+    [SerializeField] private float _changeGhostStateTime = 10;
+    [SerializeField] [Min(1)] private float _timeMultiplier = 1;
 
-    List<Ghost> _ghosts = new List<Ghost>();
-    List<GameObject> _pellets = new List<GameObject>();
-    Coroutine _gameStartRoutine = null;
-    Coroutine _ghostStateRoutine = null;
+    private List<Ghost> _ghosts = new List<Ghost>();
+    private List<GameObject> _pellets = new List<GameObject>();
+    private Coroutine _gameStartRoutine = null;
+    private Coroutine _ghostStateRoutine = null;
     Ghost.State _desiredGhostState = Ghost.State.Chase;
-    
-    void Start() {
+
+    private void Start() 
+    {
         SetupCharacters();
     }
-    
-    void SetupCharacters() {
+
+    public void SetupCharacters()
+    {
         Vector3 position = GridBoard.Instance.GetSpawnWorldPosition(Character.Pacman);
         Pacman = Instantiate(_pacmanPrefab, position, Quaternion.identity).GetComponent<PacMan>();
         Pacman.OnDie += LoseGame;
@@ -60,12 +62,14 @@ public class GameplayManager : SingletonMonobehaviour<GameplayManager>
         _ghosts.Add(ghost);
     }
 
-    public void StartGame() {
+    public void StartGame() 
+    {
         _gameStartRoutine = StartCoroutine(StartGameSequence());
         _ghostStateRoutine = StartCoroutine(ChangeGhostStateRoutine());
     }
 
-    public Vector3Int GetGhostPosition(Character p_character) {
+    public Vector3Int GetGhostPosition(Character p_character) 
+    {
         Ghost ghost = _ghosts.Find((Ghost ghost) => { return ghost.Character == p_character; });
         if (ghost != null) {
             return GridBoard.Instance.GetPositionWorldToCell(ghost.transform.position);
@@ -73,7 +77,8 @@ public class GameplayManager : SingletonMonobehaviour<GameplayManager>
         return Vector3Int.zero;
     }
 
-    IEnumerator StartGameSequence() {
+    IEnumerator StartGameSequence() 
+    {
         OnGameStarted?.Invoke();
 
         List<Ghost> ghosts = _ghosts.FindAll(
@@ -138,26 +143,31 @@ public class GameplayManager : SingletonMonobehaviour<GameplayManager>
         }
     }
 
-    public void GotBigPellet() {
+    public void GotBigPellet() 
+    {
         OnGotBigPellet?.Invoke(_frightenedDuration);
     }
 
-    public void AddPellet(GameObject p_pellet) {
+    public void AddPellet(GameObject p_pellet) 
+    {
         _pellets.Add(p_pellet);
     }
 
-    public void RemovePellet(GameObject p_pellet) {
+    public void RemovePellet(GameObject p_pellet) 
+    {
         _pellets.Remove(p_pellet);
         if (_pellets.Count == 0) {
             WinGame();
         }
     }
 
-    public void AddScore(int p_score) {
-        // wip
+    public void AddScore(int p_score)
+    { 
+
     }
 
-    void GameEnded() {
+    public void GameEnded() 
+    {
         if (_gameStartRoutine != null) {
             StopCoroutine(_gameStartRoutine);
         }
@@ -166,13 +176,15 @@ public class GameplayManager : SingletonMonobehaviour<GameplayManager>
         }
     }
 
-    void LoseGame() {
+    public void LoseGame() 
+    {
         print("Lose");
         GameEnded();
         OnGameEnded?.Invoke(false);
     }
 
-    void WinGame() {
+    public void WinGame()
+    {
         print("Win");
         GameEnded();
         OnGameEnded?.Invoke(true);

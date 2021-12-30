@@ -12,36 +12,45 @@ public class MovingObject : MonoBehaviour
     
     [SerializeField] protected float _speed = 1;
     protected List<TerrainType> _walkableOn = new List<TerrainType>{TerrainType.Walkable, TerrainType.Teleport};
-    Vector3Int _moveDirection = Vector3Int.up;
-    Vector3Int _desiredDirection = Vector3Int.up;
-    Coroutine _moveCoroutine = null;
+    private Vector3Int _moveDirection = Vector3Int.up;
+    private Vector3Int _desiredDirection = Vector3Int.up;
+    private Coroutine _moveCoroutine = null;
     
-    void Start() {
+    private void Start() 
+    {
         var cellPosition = GridBoard.Instance.GetPositionWorldToCell(transform.position);
         transform.position = GridBoard.Instance.GetPositionCellToWorld(cellPosition);
     }
 
     #region Protected Methods
-    protected void ChangeDirection(Vector2Int p_direction) {
+    protected void ChangeDirection(Vector2Int p_direction) 
+    {
         _desiredDirection = (Vector3Int)p_direction;
-        if (CanChangeDirection()) {
+        if (CanChangeDirection()) 
+        {
             _moveDirection = _desiredDirection;
             StartMoveToCell(GetCellOnDirection(_moveDirection));
         }
     }
 
-    protected void KeepMoving() {
-        if (CanChangeDirection()) {
+    protected void KeepMoving() 
+    {
+
+        if (CanChangeDirection())
+        {
             _moveDirection = _desiredDirection;
             StartMoveToCell(GetCellOnDirection(_moveDirection));
         }
-        else if (IsWalkableOnDirection(_moveDirection))  {
+        else if (IsWalkableOnDirection(_moveDirection)) 
+        {
             StartMoveToCell(GetCellOnDirection(_moveDirection));
         }
     }
 
-    protected void StopMoving() {
-        if (_moveCoroutine != null) {
+    protected void StopMoving()
+    {
+        if (_moveCoroutine != null) 
+        {
             StopCoroutine(_moveCoroutine);
         }
     }
@@ -70,37 +79,45 @@ public class MovingObject : MonoBehaviour
     }
     #endregion
 
-    Vector3Int GetCellOnDirection(Vector3Int p_direction) {
+    public Vector3Int GetCellOnDirection(Vector3Int p_direction) 
+    {
         Vector3Int currentCell = GridBoard.Instance.GetPositionWorldToCell(transform.position);
         Vector3Int directionCell = currentCell + p_direction;
         
-        if (IsOnCellPosition()) {
+        if (IsOnCellPosition()) 
+        {
             return directionCell;
         }
-        if (!IsSameWayToMovement(p_direction)) {
+        if (!IsSameWayToMovement(p_direction))
+        {
             return directionCell;
         }
         
         Vector3 directionPosition = GridBoard.Instance.GetPositionCellToWorld(directionCell);
         Vector3 diffDirection = transform.position - directionPosition;
-        if (diffDirection.magnitude > 1) { // Considerando que todos os tiles possuem tamanho de 1x1.
+        if (diffDirection.magnitude > 1) 
+        { 
             return currentCell;
         }
-        else {
+        else 
+        {
             return directionCell;
         }
     }
 
     #region Movement
-    void StartMoveToCell(Vector3Int p_cellPosition) {
+    public void StartMoveToCell(Vector3Int p_cellPosition) 
+    {
         StopMoving();
         _moveCoroutine = StartCoroutine(MoveToCell(p_cellPosition));
     }
 
-    IEnumerator MoveToCell(Vector3Int p_cellPosition) {
+    IEnumerator MoveToCell(Vector3Int p_cellPosition)
+    {
         Vector3 targetPosition = GridBoard.Instance.GetPositionCellToWorld(p_cellPosition);
 
-        while(transform.position != targetPosition) {
+        while(transform.position != targetPosition)
+        {
             yield return null;
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, _speed * Time.deltaTime);
         }

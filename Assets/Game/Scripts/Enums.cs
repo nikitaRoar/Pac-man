@@ -1,4 +1,5 @@
-public enum Character {
+public enum Character 
+{
     Pacman,
     Blinky,
     Pinky,
@@ -6,7 +7,8 @@ public enum Character {
     Clyde
 }
 
-public enum TerrainType {
+public enum TerrainType 
+{
     Walkable,
     Wall,
     RespawnWall,
